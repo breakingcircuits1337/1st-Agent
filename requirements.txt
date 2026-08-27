@@ -1,0 +1,9 @@
+# Core dependencies
+cactus-needle[gpu]
+pydantic
+
+# Optional: for data generation (needs OPENROUTER_API_KEY)
+# huggingface_hub
+
+# For monitoring/logging
+python-dotenv
