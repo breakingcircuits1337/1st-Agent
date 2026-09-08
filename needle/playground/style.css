@@ -511,3 +511,245 @@ textarea::placeholder { color: var(--muted-foreground); }
   .btn-primary { padding: 0 14px; }
   .btn-ghost { display: none; }
 }
+
+/* Additional CSS for interactive buttons, wrap containers & copy button */
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 500;
+  transition: color 150ms;
+}
+
+.action-btn:hover {
+  color: var(--foreground);
+}
+
+.turn-result-wrap {
+  position: relative;
+}
+
+.turn-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--card);
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 4px);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 150ms;
+}
+
+.turn-copy-btn:hover {
+  opacity: 1;
+  color: var(--foreground);
+  border-color: var(--ring);
+}
+
+/* Tabs and Builder styling */
+.mode-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--input);
+  padding: 2px;
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+}
+
+.mode-tab {
+  flex: 1;
+  height: 28px;
+  font-size: 11px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--muted-foreground);
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  transition: all 150ms;
+}
+
+.mode-tab.active {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.tab-view {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.tab-view.active {
+  display: flex;
+}
+
+.mb-2 { margin-bottom: 8px; }
+.mt-2 { margin-top: 8px; }
+
+.builder-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.builder-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.builder-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.builder-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.builder-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.builder-field-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.builder-input {
+  height: 28px;
+  padding: 0 8px;
+  background: var(--input);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+}
+
+.builder-select {
+  height: 28px;
+  padding: 0 6px;
+  background: var(--input);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+}
+
+.param-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 8px;
+  border-left: 2px solid var(--border);
+}
+
+.param-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 4px;
+}
+
+.mono-code {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  flex: 1;
+  resize: none;
+}
+
+.code-note {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  line-height: 1.4;
+}
+
+.tool-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--foreground);
+  cursor: pointer;
+  user-select: none;
+}
+
+.executed-results {
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 12px;
+  color: #4ade80;
+}
+
+.executed-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  color: #4ade80;
+}

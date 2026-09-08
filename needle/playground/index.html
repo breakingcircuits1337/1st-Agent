@@ -36,14 +36,52 @@
       </div>
       <div class="panel-section panel-tools">
         <div class="panel-header">
-          <label class="panel-label">Tools JSON</label>
-          <label class="file-btn">
-            Upload
-            <input type="file" id="toolsFile" accept=".json" onchange="loadToolsFile(this)">
+          <div class="mode-tabs">
+            <button class="mode-tab active" id="tabSchemaJson" onclick="switchToolsTab('json')">JSON Schema</button>
+            <button class="mode-tab" id="tabSchemaBuilder" onclick="switchToolsTab('builder')">Visual Builder</button>
+            <button class="mode-tab" id="tabPythonCode" onclick="switchToolsTab('code')">Python Tool Code</button>
+          </div>
+        </div>
+
+        <!-- JSON Editor View -->
+        <div id="viewJson" class="tab-view active">
+          <div class="panel-actions mb-2">
+            <button class="file-btn action-btn" onclick="formatToolsJson()" title="Format JSON">Format JSON</button>
+            <label class="file-btn action-btn">
+              Upload JSON
+              <input type="file" id="toolsFile" accept=".json" onchange="loadToolsFile(this)">
+            </label>
+          </div>
+          <textarea id="tools" spellcheck="false" placeholder="Paste tool definitions here..."></textarea>
+        </div>
+
+        <!-- Visual Schema Builder View -->
+        <div id="viewBuilder" class="tab-view">
+          <div class="builder-actions mb-2">
+            <button class="btn-sm btn-ghost" onclick="addToolToBuilder()">+ Add New Tool</button>
+            <button class="btn-sm btn-primary" onclick="syncBuilderToJson()">Apply to Schema</button>
+          </div>
+          <div id="builderList" class="builder-list"></div>
+        </div>
+
+        <!-- Python Tool Code View -->
+        <div id="viewCode" class="tab-view">
+          <div class="panel-actions mb-2">
+            <button class="file-btn action-btn" onclick="generatePythonCode()">Refresh Code</button>
+            <button class="file-btn action-btn" onclick="copyPythonCode()">Copy Code</button>
+          </div>
+          <div class="code-note mb-2">Define tool execution code below. When <b>Execute Tools</b> mode is on, Needle executes these Python implementations during chat!</div>
+          <textarea id="pythonCodeText" class="mono-code" spellcheck="false" placeholder="# Python tool implementations..."></textarea>
+        </div>
+
+        <div class="tool-controls-row mt-2">
+          <label class="toggle-label" title="Enable real Python function execution during chat runs">
+            <input type="checkbox" id="execToolsToggle" checked>
+            <span>Execute Python Tools</span>
           </label>
         </div>
-        <textarea id="tools" spellcheck="false" placeholder="Paste tool definitions here..."></textarea>
-        <button class="btn-finetune" onclick="openFinetuneModal()">Finetune on these tools</button>
+
+        <button class="btn-finetune mt-2" onclick="openFinetuneModal()">Finetune on these tools</button>
       </div>
     </aside>
     <div class="resize-handle" id="resizeHandle"></div>
@@ -52,7 +90,7 @@
         <div class="panel-header">
           <label class="panel-label">Query</label>
           <span class="model-name" id="modelName"></span>
-          <label class="file-btn">
+          <label class="file-btn action-btn">
             Load model
             <input type="file" id="modelFile" accept=".cact" onchange="loadModelFile(this)">
           </label>

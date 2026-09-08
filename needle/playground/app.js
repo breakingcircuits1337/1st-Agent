@@ -1,44 +1,184 @@
-var PRESETS = {"home": {"tools": [{"name": "set_lights", "description": "Turn lights on or off or dim them.", "parameters": {"type": "object", "properties": {"room": {"type": "string", "description": "Which room."}, "state": {"type": "string", "enum": ["on", "off"]}, "brightness": {"type": "integer", "description": "Percent 1-100."}}, "required": ["room", "state"]}}, {"name": "set_thermostat", "description": "Set the target temperature.", "parameters": {"type": "object", "properties": {"room": {"type": "string"}, "temperature": {"type": "number"}, "mode": {"type": "string", "enum": ["heat", "cool", "auto"]}}, "required": ["room", "temperature"]}}, {"name": "lock_door", "description": "Lock a door.", "parameters": {"type": "object", "properties": {"door": {"type": "string", "description": "Which door."}}, "required": ["door"]}}], "q": "dim the bedroom lights to 20 percent and lock the front door"}, "robot": {"tools": [{"name": "move", "description": "Drive the robot in a direction.", "parameters": {"type": "object", "properties": {"direction": {"type": "string", "enum": ["forward", "backward", "left", "right"]}, "distance_m": {"type": "number", "description": "Distance in meters."}}, "required": ["direction", "distance_m"]}}, {"name": "rotate", "description": "Rotate the robot in place.", "parameters": {"type": "object", "properties": {"direction": {"type": "string", "enum": ["left", "right"]}, "degrees": {"type": "number"}}, "required": ["direction", "degrees"]}}, {"name": "gripper", "description": "Open or close the gripper.", "parameters": {"type": "object", "properties": {"action": {"type": "string", "enum": ["open", "close"]}}, "required": ["action"]}}], "q": "move forward 2 meters, turn left 90 degrees, then close the gripper"}, "device": {"tools": [{"name": "open_website", "description": "Open a website in a new tab.", "parameters": {"type": "object", "properties": {"url": {"type": "string", "description": "The site to open."}}, "required": ["url"]}}, {"name": "set_theme", "description": "Change the page accent color.", "parameters": {"type": "object", "properties": {"accent_color": {"type": "string", "description": "A color name or hex."}}, "required": ["accent_color"]}}, {"name": "speak", "description": "Say something out loud through the device speakers.", "parameters": {"type": "object", "properties": {"text": {"type": "string"}}, "required": ["text"]}}], "q": "make the accent green, open github.com, and say hello"}, "gallery": {"tools": [{"name": "create_album", "description": "Create a new photo album.", "parameters": {"type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"]}}, {"name": "move_photos", "description": "Move photos into an album.", "parameters": {"type": "object", "properties": {"album": {"type": "string"}, "filter": {"type": "string", "description": "Which photos, e.g. 'last weekend', 'screenshots'."}}, "required": ["album", "filter"]}}, {"name": "delete_photos", "description": "Delete photos.", "parameters": {"type": "object", "properties": {"filter": {"type": "string"}}, "required": ["filter"]}}], "q": "create an album called Summer 2026 and move the photos from last weekend into it"}, "email": {"tools": [{"name": "send_email", "description": "Send an email.", "parameters": {"type": "object", "properties": {"to": {"type": "string", "description": "Email address."}, "subject": {"type": "string"}, "body": {"type": "string"}}, "required": ["to", "subject", "body"]}}], "q": "send the receipt to finance@cactus.dev with subject expenses: Blue Bottle Coffee, $14.50, August 4th"}, "currency": {"tools": [{"name": "convert_currency", "description": "Convert an amount between currencies.", "parameters": {"type": "object", "properties": {"amount": {"type": "number"}, "from_currency": {"type": "string", "description": "ISO code, e.g. USD."}, "to_currency": {"type": "string", "description": "ISO code, e.g. EUR."}}, "required": ["amount", "from_currency", "to_currency"]}}], "q": "how much is 250 dollars in euros"}, "document": {"tools": [{"name": "record_booking", "description": "Record the details of a hotel booking.", "parameters": {"type": "object", "properties": {"hotel": {"type": "string"}, "confirmation_number": {"type": "string"}, "guest_name": {"type": "string"}, "room_type": {"type": "string"}, "check_in": {"type": "string"}, "check_out": {"type": "string"}, "total": {"type": "number"}, "currency": {"type": "string"}}, "required": ["confirmation_number", "check_in", "check_out", "total"]}}], "q": "extract the booking from this email: Dear Mr Okafor, thank you for choosing the Harbor Light Hotel. This email confirms reservation HL-88213 for a deluxe sea-view room, checking in on 14 September 2026 and checking out on 18 September 2026. The total for your stay is 642.50 euros, payable at checkout. Breakfast is included from 7am, and our shuttle meets the 9:40 ferry on request. We look forward to welcoming you. Warm regards, Reception."}, "sentiment": {"tools": [{"name": "classify_sentiment", "description": "Classify the sentiment of a message.", "parameters": {"type": "object", "properties": {"sentiment": {"type": "string", "enum": ["positive", "negative", "neutral", "mixed"]}}, "required": ["sentiment"]}}], "q": "classify the sentiment of this message: this is the worst purchase I have ever made, it broke in a day and support ignored me"}, "crowded": {"tools": [{"name": "set_lights", "description": "Control lights.", "parameters": {"type": "object", "properties": {"room": {"type": "string"}, "state": {"type": "string", "enum": ["on", "off"]}}, "required": ["room", "state"]}}, {"name": "set_thermostat", "description": "Set temperature.", "parameters": {"type": "object", "properties": {"temperature": {"type": "number"}}, "required": ["temperature"]}}, {"name": "lock_door", "description": "Lock a door.", "parameters": {"type": "object", "properties": {"door": {"type": "string"}}, "required": ["door"]}}, {"name": "play_music", "description": "Play music.", "parameters": {"type": "object", "properties": {"genre": {"type": "string"}}, "required": []}}, {"name": "set_timer", "description": "Set a timer.", "parameters": {"type": "object", "properties": {"time_human": {"type": "string"}}, "required": ["time_human"]}}, {"name": "send_message", "description": "Send a text.", "parameters": {"type": "object", "properties": {"recipient": {"type": "string"}, "message": {"type": "string"}}, "required": ["recipient", "message"]}}, {"name": "create_note", "description": "Create a note.", "parameters": {"type": "object", "properties": {"text": {"type": "string"}}, "required": ["text"]}}, {"name": "start_vacuum", "description": "Start the robot vacuum.", "parameters": {"type": "object", "properties": {"room": {"type": "string"}}, "required": []}}, {"name": "water_plants", "description": "Run the irrigation system.", "parameters": {"type": "object", "properties": {"zone": {"type": "string"}}, "required": []}}, {"name": "open_blinds", "description": "Open or close the blinds.", "parameters": {"type": "object", "properties": {"room": {"type": "string"}, "position": {"type": "string", "enum": ["open", "closed", "half"]}}, "required": ["room", "position"]}}, {"name": "preheat_oven", "description": "Preheat the oven.", "parameters": {"type": "object", "properties": {"temperature_c": {"type": "number"}}, "required": ["temperature_c"]}}, {"name": "charge_car", "description": "Start charging the car.", "parameters": {"type": "object", "properties": {"limit_percent": {"type": "integer"}}, "required": []}}], "q": "close the bedroom blinds halfway"}, "repeat": {"tools": [{"name": "add_to_list", "description": "Add one item to the shopping list.", "parameters": {"type": "object", "properties": {"item": {"type": "string"}, "quantity": {"type": "integer"}}, "required": ["item"]}}], "q": "add 2 milk and 6 eggs to the shopping list"}, "array": {"tools": [{"name": "add_items", "description": "Add items to the shopping list.", "parameters": {"type": "object", "properties": {"items": {"type": "array", "items": {"type": "string"}}}, "required": ["items"]}}], "q": "add milk, eggs, and bread to the shopping list"}, "flight": {"tools": [{"name": "search_flights", "description": "Search for flights.", "parameters": {"type": "object", "properties": {"from_city": {"type": "string"}, "to_city": {"type": "string"}, "date": {"type": "string"}, "direct_only": {"type": "boolean", "description": "Only non-stop flights."}, "passengers": {"type": "integer"}}, "required": ["from_city", "to_city"]}}], "q": "find non-stop flights from lagos to nairobi on december 3rd for two passengers"}, "refuse": {"tools": [{"name": "move", "description": "Drive the robot in a direction.", "parameters": {"type": "object", "properties": {"direction": {"type": "string", "enum": ["forward", "backward", "left", "right"]}, "distance_m": {"type": "number", "description": "Distance in meters."}}, "required": ["direction", "distance_m"]}}, {"name": "rotate", "description": "Rotate the robot in place.", "parameters": {"type": "object", "properties": {"direction": {"type": "string", "enum": ["left", "right"]}, "degrees": {"type": "number"}}, "required": ["direction", "degrees"]}}, {"name": "gripper", "description": "Open or close the gripper.", "parameters": {"type": "object", "properties": {"action": {"type": "string", "enum": ["open", "close"]}}, "required": ["action"]}}], "q": "write me a short poem about the moon"}};
-var LABELS = {"home": "Smart home", "robot": "Robot", "gallery": "Gallery", "device": "Device control", "email": "Extract email", "currency": "Currency", "document": "Document extraction", "sentiment": "Sentiment", "crowded": "12 tools routing", "repeat": "Repeated calls", "array": "Array argument", "flight": "Flight form", "refuse": "Off-topic refusal"};
+var PRESETS = {
+  home: {
+    q: "dim the bedroom lights to 20 percent",
+    tools: [
+      {
+        name: "set_lights",
+        description: "Set light brightness for a room.",
+        parameters: {
+          type: "object",
+          properties: {
+            room: { type: "string", enum: ["bedroom", "kitchen", "living room", "office"] },
+            brightness: { type: "integer", minimum: 0, maximum: 100 },
+          },
+          required: ["room", "brightness"],
+        },
+      },
+      {
+        name: "set_thermostat",
+        description: "Set the thermostat target temperature.",
+        parameters: {
+          type: "object",
+          properties: {
+            temperature_c: { type: "number", minimum: 10, maximum: 32 },
+          },
+          required: ["temperature_c"],
+        },
+      },
+    ],
+  },
+  media: {
+    q: "play plastic love on the living room speaker at volume 4",
+    tools: [
+      {
+        name: "play_media",
+        description: "Start playback of a track or playlist on a speaker target.",
+        parameters: {
+          type: "object",
+          properties: {
+            query: { type: "string" },
+            target: { type: "string", enum: ["living room speaker", "bedroom speaker", "kitchen speaker"] },
+            volume: { type: "integer", minimum: 1, maximum: 10 },
+          },
+          required: ["query"],
+        },
+      },
+      {
+        name: "pause_media",
+        description: "Pause current playback.",
+        parameters: { type: "object", properties: {} },
+      },
+    ],
+  },
+  productivity: {
+    q: "schedule a sync with Sarah tomorrow at 3pm for 30 minutes",
+    tools: [
+      {
+        name: "create_event",
+        description: "Create a new calendar event.",
+        parameters: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            start_iso: { type: "string" },
+            duration_minutes: { type: "integer" },
+          },
+          required: ["title", "start_iso"],
+        },
+      },
+      {
+        name: "send_message",
+        description: "Send a message to a recipient.",
+        parameters: {
+          type: "object",
+          properties: {
+            recipient: { type: "string" },
+            body: { type: "string" },
+          },
+          required: ["recipient", "body"],
+        },
+      },
+    ],
+  },
+  extraction: {
+    q: "Invoice INV-2026-882 from Acme Corp, total $1,200.00, due 2026-09-01",
+    tools: [
+      {
+        name: "Invoice",
+        description: "Extract structured invoice metadata from text.",
+        parameters: {
+          type: "object",
+          properties: {
+            vendor: { type: "string" },
+            invoice_id: { type: "string" },
+            total: { type: "number" },
+            due_date: { type: "string" },
+          },
+          required: ["vendor", "total"],
+        },
+      },
+    ],
+  },
+};
 
-var _toastTimer = null;
+var LABELS = {
+  home: "Smart Home",
+  media: "Media Player",
+  productivity: "Productivity",
+  extraction: "Structured Extraction",
+};
+
+var toastTimer = null;
 
 function showError(msg) {
-  if (_toastTimer) clearTimeout(_toastTimer);
+  var t = document.getElementById("toast");
   document.getElementById("toastMsg").textContent = msg;
-  document.getElementById("toast").classList.add("visible");
-  _toastTimer = setTimeout(dismissToast, 8000);
+  t.classList.add("visible");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(dismissToast, 6000);
 }
 
 function dismissToast() {
-  document.getElementById("toast").classList.remove("visible");
+  var t = document.getElementById("toast");
+  t.classList.remove("visible");
+  if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+}
+
+function fetchModelName() {
+  fetch("/model")
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d.name) document.getElementById("modelName").textContent = d.name;
+    })
+    .catch(function () {});
+}
+
+function switchToolsTab(tab) {
+  document.getElementById("tabSchemaJson").classList.toggle("active", tab === "json");
+  document.getElementById("tabSchemaBuilder").classList.toggle("active", tab === "builder");
+  document.getElementById("tabPythonCode").classList.toggle("active", tab === "code");
+
+  document.getElementById("viewJson").classList.toggle("active", tab === "json");
+  document.getElementById("viewBuilder").classList.toggle("active", tab === "builder");
+  document.getElementById("viewCode").classList.toggle("active", tab === "code");
+
+  if (tab === "builder") renderBuilderFromToolsJson();
+  if (tab === "code") generatePythonCode();
+}
+
+function formatToolsJson() {
+  var toolsEl = document.getElementById("tools");
+  var val = toolsEl.value.trim();
+  if (!val) return;
+  try {
+    var parsed = JSON.parse(val);
+    toolsEl.value = JSON.stringify(parsed, null, 2);
+  } catch (e) {
+    showError("Invalid tools JSON: " + e.message);
+  }
 }
 
 function loadToolsFile(input) {
-  var file = input.files[0];
+  var file = input.files && input.files[0];
   if (!file) return;
   var reader = new FileReader();
-  reader.onload = function () {
+  reader.onload = function (e) {
+    var content = e.target.result;
     try {
-      JSON.parse(reader.result);
-      document.getElementById("tools").value = reader.result;
-      newChat();
-    } catch (e) {
-      showError("Invalid JSON file");
+      var json = JSON.parse(content);
+      document.getElementById("tools").value = JSON.stringify(json, null, 2);
+      renderBuilderFromToolsJson();
+      generatePythonCode();
+    } catch (err) {
+      showError("Invalid JSON in uploaded file: " + err.message);
     }
   };
   reader.readAsText(file);
   input.value = "";
 }
 
-function fetchModelName() {
-  fetch("/model").then(function (r) { return r.json(); })
-    .then(function (d) { document.getElementById("modelName").textContent = d.name || ""; })
-    .catch(function () {});
-}
-
 function loadModelFile(input) {
-  var file = input.files[0];
+  var file = input.files && input.files[0];
   if (!file) return;
   var name = document.getElementById("modelName");
   name.textContent = "loading " + file.name + "...";
@@ -52,8 +192,213 @@ function loadModelFile(input) {
   input.value = "";
 }
 
+/* Visual Schema Builder State & Renderer */
+var builderTools = [];
+
+function renderBuilderFromToolsJson() {
+  var toolsVal = document.getElementById("tools").value.trim() || "[]";
+  try {
+    builderTools = JSON.parse(toolsVal);
+  } catch (e) {
+    builderTools = [];
+  }
+  renderBuilderUI();
+}
+
+function renderBuilderUI() {
+  var container = document.getElementById("builderList");
+  container.innerHTML = "";
+  builderTools.forEach(function (tool, tIdx) {
+    var card = document.createElement("div");
+    card.className = "builder-card";
+
+    var header = document.createElement("div");
+    header.className = "builder-card-header";
+    header.innerHTML = '<span class="builder-card-title">Tool #' + (tIdx + 1) + '</span>' +
+                       '<button class="icon-btn" onclick="removeToolFromBuilder(' + tIdx + ')">&times;</button>';
+    card.appendChild(header);
+
+    var nameInput = document.createElement("input");
+    nameInput.className = "builder-input";
+    nameInput.placeholder = "tool_name";
+    nameInput.value = tool.name || "";
+    nameInput.oninput = function(e) { tool.name = e.target.value; };
+    card.appendChild(nameInput);
+
+    var descInput = document.createElement("input");
+    descInput.className = "builder-input";
+    descInput.placeholder = "Tool description...";
+    descInput.value = tool.description || "";
+    descInput.oninput = function(e) { tool.description = e.target.value; };
+    card.appendChild(descInput);
+
+    var paramHeader = document.createElement("div");
+    paramHeader.className = "builder-actions mt-2";
+    paramHeader.innerHTML = '<span style="font-size:11px;font-weight:600;color:var(--muted-foreground);">Parameters</span>' +
+                            '<button class="btn-sm btn-ghost" onclick="addParamToTool(' + tIdx + ')">+ Param</button>';
+    card.appendChild(paramHeader);
+
+    var paramList = document.createElement("div");
+    paramList.className = "param-list";
+
+    var props = (tool.parameters && tool.parameters.properties) || {};
+    var reqs = (tool.parameters && tool.parameters.required) || [];
+
+    Object.keys(props).forEach(function (pName) {
+      var pObj = props[pName];
+      var row = document.createElement("div");
+      row.className = "param-row";
+
+      var pNameIn = document.createElement("input");
+      pNameIn.className = "builder-input";
+      pNameIn.style.width = "90px";
+      pNameIn.value = pName;
+      pNameIn.onchange = function(e) {
+        var newKey = e.target.value.trim();
+        if (newKey && newKey !== pName) {
+          props[newKey] = pObj;
+          delete props[pName];
+          if (reqs.includes(pName)) {
+            reqs[reqs.indexOf(pName)] = newKey;
+          }
+          renderBuilderUI();
+        }
+      };
+
+      var pTypeSel = document.createElement("select");
+      pTypeSel.className = "builder-select";
+      ["string", "integer", "number", "boolean"].forEach(function(t) {
+        var opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+        if (pObj.type === t) opt.selected = true;
+        pTypeSel.appendChild(opt);
+      });
+      pTypeSel.onchange = function(e) { pObj.type = e.target.value; };
+
+      var pReq = document.createElement("input");
+      pReq.type = "checkbox";
+      pReq.checked = reqs.includes(pName);
+      pReq.title = "Required?";
+      pReq.onchange = function(e) {
+        if (e.target.checked && !reqs.includes(pName)) reqs.push(pName);
+        if (!e.target.checked && reqs.includes(pName)) reqs.splice(reqs.indexOf(pName), 1);
+      };
+
+      var pDel = document.createElement("button");
+      pDel.className = "icon-btn";
+      pDel.innerHTML = "&times;";
+      pDel.onclick = function() {
+        delete props[pName];
+        if (reqs.includes(pName)) reqs.splice(reqs.indexOf(pName), 1);
+        renderBuilderUI();
+      };
+
+      row.appendChild(pNameIn);
+      row.appendChild(pTypeSel);
+      row.appendChild(pReq);
+      row.appendChild(pDel);
+      paramList.appendChild(row);
+    });
+
+    card.appendChild(paramList);
+    container.appendChild(card);
+  });
+}
+
+function addToolToBuilder() {
+  builderTools.push({
+    name: "new_tool",
+    description: "Description for new tool",
+    parameters: {
+      type: "object",
+      properties: {
+        arg1: { type: "string" }
+      },
+      required: ["arg1"]
+    }
+  });
+  renderBuilderUI();
+}
+
+function removeToolFromBuilder(idx) {
+  builderTools.splice(idx, 1);
+  renderBuilderUI();
+}
+
+function addParamToTool(tIdx) {
+  var tool = builderTools[tIdx];
+  if (!tool.parameters) tool.parameters = { type: "object", properties: {}, required: [] };
+  if (!tool.parameters.properties) tool.parameters.properties = {};
+  if (!tool.parameters.required) tool.parameters.required = [];
+  var pName = "param_" + (Object.keys(tool.parameters.properties).length + 1);
+  tool.parameters.properties[pName] = { type: "string" };
+  tool.parameters.required.push(pName);
+  renderBuilderUI();
+}
+
+function syncBuilderToJson() {
+  document.getElementById("tools").value = JSON.stringify(builderTools, null, 2);
+  generatePythonCode();
+  showError("Tools updated from visual builder!");
+}
+
+/* Python Tool Code Generator */
+function generatePythonCode() {
+  var toolsVal = document.getElementById("tools").value.trim() || "[]";
+  var parsed = [];
+  try { parsed = JSON.parse(toolsVal); } catch (e) {}
+
+  var pyLines = ["import needle", ""];
+  parsed.forEach(function (tool) {
+    var name = tool.name || "my_tool";
+    var desc = tool.description || "Tool description.";
+    var props = (tool.parameters && tool.parameters.properties) || {};
+
+    var args = [];
+    Object.keys(props).forEach(function (pName) {
+      var pType = props[pName].type || "str";
+      var pyType = "str";
+      if (pType === "integer") pyType = "int";
+      if (pType === "number") pyType = "float";
+      if (pType === "boolean") pyType = "bool";
+      args.push(pName + ": " + pyType);
+    });
+
+    pyLines.push("@needle.tool");
+    pyLines.push("def " + name + "(" + args.join(", ") + "):");
+    pyLines.push('    """' + desc + '"""');
+    pyLines.push('    # Execute tool logic here');
+    pyLines.push('    return {"status": "success", "executed_tool": "' + name + '"}');
+    pyLines.push("");
+  });
+
+  document.getElementById("pythonCodeText").value = pyLines.join("\n");
+}
+
+function copyPythonCode() {
+  var code = document.getElementById("pythonCodeText").value;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(function() {
+      showError("Python tool code copied to clipboard!");
+    });
+  }
+}
+
 var conversation = document.getElementById("conversation");
 var emptyState = document.getElementById("emptyState");
+
+function copyToClipboard(text, btnEl) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      var orig = btnEl.textContent;
+      btnEl.textContent = "Copied!";
+      setTimeout(function() { btnEl.textContent = orig; }, 1500);
+    }).catch(function() {
+      showError("Copy failed");
+    });
+  }
+}
 
 function addTurn(query, data) {
   if (emptyState) { emptyState.remove(); emptyState = null; }
@@ -65,16 +410,45 @@ function addTurn(query, data) {
   q.textContent = query;
   turn.appendChild(q);
 
+  var resultWrap = document.createElement("div");
+  resultWrap.className = "turn-result-wrap";
+
+  var copyBtn = document.createElement("button");
+  copyBtn.className = "turn-copy-btn";
+  copyBtn.textContent = "Copy";
+
   var pre = document.createElement("pre");
   pre.className = "turn-result";
   var calls = data.function_calls;
+  var formattedResult = "";
   if (data.type === "refuse" || (Array.isArray(calls) && calls.length === 0)) {
     pre.classList.add("refused");
-    pre.textContent = "no tool call (off-topic / refused)";
+    formattedResult = "no tool call (off-topic / refused)";
+    pre.textContent = formattedResult;
   } else {
-    pre.textContent = JSON.stringify(calls || data, null, 2);
+    formattedResult = JSON.stringify(calls || data, null, 2);
+    pre.textContent = formattedResult;
   }
-  turn.appendChild(pre);
+
+  copyBtn.onclick = function() { copyToClipboard(formattedResult, copyBtn); };
+
+  resultWrap.appendChild(copyBtn);
+  resultWrap.appendChild(pre);
+  turn.appendChild(resultWrap);
+
+  if (data.results && data.results.length > 0) {
+    var execBox = document.createElement("div");
+    execBox.className = "executed-results";
+    var execTitle = document.createElement("div");
+    execTitle.className = "executed-title";
+    execTitle.textContent = "Executed Tool Outputs";
+    execBox.appendChild(execTitle);
+    var execPre = document.createElement("pre");
+    execPre.style.margin = "0";
+    execPre.textContent = JSON.stringify(data.results, null, 2);
+    execBox.appendChild(execPre);
+    turn.appendChild(execBox);
+  }
 
   if (data.reasoning) {
     var reason = document.createElement("div");
@@ -91,9 +465,12 @@ function addTurn(query, data) {
   }
 
   var bits = [];
-  if (data.confidence !== undefined && data.confidence !== null)
+  if (data.confidence !== undefined && data.confidence !== null) {
     bits.push("confidence " + Number(data.confidence).toFixed(4));
-  if (data.decode_tps) bits.push(Math.round(data.decode_tps) + " tok/s");
+  }
+  if (data.decode_tps) {
+    bits.push(Math.round(data.decode_tps) + " tok/s");
+  }
   if (bits.length) {
     var meta = document.createElement("div");
     meta.className = "turn-meta";
@@ -113,13 +490,19 @@ async function send() {
   var tools = document.getElementById("tools").value.trim() || "[]";
   try { JSON.parse(tools); } catch (e) { showError("Invalid tools JSON"); return; }
 
+  var code = document.getElementById("pythonCodeText").value;
+  var execute = document.getElementById("execToolsToggle").checked;
+
   input.disabled = true;
   btn.disabled = true;
+  var origBtnText = btn.textContent;
+  btn.textContent = "Running...";
+
   try {
     var r = await fetch("/complete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: query, tools: tools }),
+      body: JSON.stringify({ query: query, tools: tools, code: code, execute: execute }),
     });
     var data = await r.json();
     if (data.error) { showError(data.error); }
@@ -129,6 +512,7 @@ async function send() {
   } finally {
     input.disabled = false;
     btn.disabled = false;
+    btn.textContent = origBtnText;
     input.focus();
   }
 }
@@ -147,6 +531,8 @@ function applyPreset(key) {
   var p = PRESETS[key];
   document.getElementById("tools").value = JSON.stringify(p.tools, null, 2);
   document.getElementById("query").value = p.q;
+  renderBuilderFromToolsJson();
+  generatePythonCode();
   newChat();
   document.getElementById("query").focus();
 }

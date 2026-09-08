@@ -27,7 +27,36 @@ class Engine:
         self.agent = Needle(tools="[]", weights=self.weights)
         self.tools_json = "[]"
 
-    def complete(self, tools_json, query):
+    def _execute_calls(self, response, python_code):
+        calls = response.get("function_calls") or []
+        if not calls or not python_code or not python_code.strip():
+            return []
+
+        # Safe execution namespace for custom tool functions
+        exec_ns = {}
+        try:
+            import needle
+            exec_ns["needle"] = needle
+            exec(python_code, exec_ns)
+        except Exception as exc:
+            return [{"error": f"Failed to execute Python tool module: {exc}"}]
+
+        results = []
+        for call in calls:
+            fn_name = call.get("name")
+            args = call.get("arguments") or {}
+            fn = exec_ns.get(fn_name)
+            if fn and callable(fn):
+                try:
+                    res = fn(**args)
+                    results.append({"tool": fn_name, "output": res})
+                except Exception as exc:
+                    results.append({"tool": fn_name, "error": str(exc)})
+            else:
+                results.append({"tool": fn_name, "status": "simulated", "arguments": args})
+        return results
+
+    def complete(self, tools_json, query, python_code=None, execute=False):
         from .. import Needle, _lib
         with self.lock:
             if self.agent is None or tools_json != self.tools_json:
@@ -35,7 +64,10 @@ class Engine:
                 self.tools_json = tools_json
             else:
                 _lib().needle_reset()
-            return self.agent.complete(query)
+            res = self.agent.complete(query)
+            if execute:
+                res["results"] = self._execute_calls(res, python_code)
+            return res
 
     def reset(self):
         from .. import _lib
@@ -109,13 +141,17 @@ class _Handler(BaseHTTPRequestHandler):
 
     def _json_body(self):
         length = int(self.headers.get("Content-Length", 0))
-        return json.loads(self.rfile.read(length) or b"{}")
+        raw = self.rfile.read(length) if length > 0 else b"{}"
+        return json.loads(raw or b"{}")
 
     def do_GET(self):
         path = self.path.split("?")[0]
         if path in _STATIC:
             f = _DIR / _STATIC[path]
-            self._send(200, f.read_bytes(), _CTYPE[f.suffix])
+            if f.is_file():
+                self._send(200, f.read_bytes(), _CTYPE[f.suffix])
+            else:
+                self._send(404, b"not found", "text/plain")
         elif path == "/model":
             self._send(200, json.dumps({"name": self.engine.name}))
         elif path == "/finetune/status":
@@ -123,7 +159,7 @@ class _Handler(BaseHTTPRequestHandler):
         elif path.startswith("/download/"):
             name = os.path.basename(path[len("/download/"):])
             f = _DOWNLOADS / name
-            if f.exists():
+            if f.is_file():
                 self._send(200, f.read_bytes(), "application/octet-stream")
             else:
                 self._send(404, b"not found", "text/plain")
@@ -136,7 +172,10 @@ class _Handler(BaseHTTPRequestHandler):
                 body = self._json_body()
                 tools = body.get("tools", [])
                 tools_json = tools if isinstance(tools, str) else json.dumps(tools)
-                result = self.engine.complete(tools_json, body.get("query", ""))
+                python_code = body.get("code")
+                execute = bool(body.get("execute", False))
+                result = self.engine.complete(tools_json, body.get("query", ""),
+                                              python_code=python_code, execute=execute)
                 self._send(200, json.dumps(result))
             elif self.path == "/reset":
                 self.engine.reset()
