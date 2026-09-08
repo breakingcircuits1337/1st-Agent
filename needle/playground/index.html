@@ -37,10 +37,13 @@
       <div class="panel-section panel-tools">
         <div class="panel-header">
           <label class="panel-label">Tools JSON</label>
-          <label class="file-btn">
-            Upload
-            <input type="file" id="toolsFile" accept=".json" onchange="loadToolsFile(this)">
-          </label>
+          <div class="panel-actions">
+            <button class="file-btn action-btn" onclick="formatToolsJson()" title="Format JSON">Format</button>
+            <label class="file-btn action-btn">
+              Upload
+              <input type="file" id="toolsFile" accept=".json" onchange="loadToolsFile(this)">
+            </label>
+          </div>
         </div>
         <textarea id="tools" spellcheck="false" placeholder="Paste tool definitions here..."></textarea>
         <button class="btn-finetune" onclick="openFinetuneModal()">Finetune on these tools</button>
@@ -52,7 +55,7 @@
         <div class="panel-header">
           <label class="panel-label">Query</label>
           <span class="model-name" id="modelName"></span>
-          <label class="file-btn">
+          <label class="file-btn action-btn">
             Load model
             <input type="file" id="modelFile" accept=".cact" onchange="loadModelFile(this)">
           </label>

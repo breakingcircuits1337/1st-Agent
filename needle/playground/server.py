@@ -109,13 +109,17 @@ class _Handler(BaseHTTPRequestHandler):
 
     def _json_body(self):
         length = int(self.headers.get("Content-Length", 0))
-        return json.loads(self.rfile.read(length) or b"{}")
+        raw = self.rfile.read(length) if length > 0 else b"{}"
+        return json.loads(raw or b"{}")
 
     def do_GET(self):
         path = self.path.split("?")[0]
         if path in _STATIC:
             f = _DIR / _STATIC[path]
-            self._send(200, f.read_bytes(), _CTYPE[f.suffix])
+            if f.is_file():
+                self._send(200, f.read_bytes(), _CTYPE[f.suffix])
+            else:
+                self._send(404, b"not found", "text/plain")
         elif path == "/model":
             self._send(200, json.dumps({"name": self.engine.name}))
         elif path == "/finetune/status":
@@ -123,7 +127,7 @@ class _Handler(BaseHTTPRequestHandler):
         elif path.startswith("/download/"):
             name = os.path.basename(path[len("/download/"):])
             f = _DOWNLOADS / name
-            if f.exists():
+            if f.is_file():
                 self._send(200, f.read_bytes(), "application/octet-stream")
             else:
                 self._send(404, b"not found", "text/plain")
