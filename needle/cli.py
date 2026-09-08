@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import threading
+from . import __version__
 
 HELP = """usage: needle <command> [options]
 
@@ -15,6 +16,7 @@ HELP = """usage: needle <command> [options]
   playground     serve the browser playground
 
 needle <command> --help for the options of one command.
+needle --version to print version information.
 Check the readme for the rest."""
 
 
@@ -38,17 +40,7 @@ def _install_xla_log_filter():
 
     XLA's Triton GEMM autotuner logs failed candidate fusions via LOG(ERROR)
     in xtile_compiler.cc and cuda_timer.cc. These are unconditional and do
-    not respect TF_CPP_MIN_LOG_LEVEL, so we filter them at the file
-    descriptor level.
-
-    Strategy:
-      - Rebind Python's sys.stderr to a fresh file object over the real
-        terminal fd, so tqdm and print() writes go straight to the terminal
-        and never enter our pipe. This keeps progress bars (which use \\r
-        without trailing \\n) from stalling the filter's line parser.
-      - Replace fd 2 with a pipe. Only C-level writes (absl / XLA LOG(...))
-        now flow through the pipe, and they are always \\n-terminated and
-        well-formed, so a simple line-based filter is reliable.
+    not respect TF_CPP_MIN_LOG_LEVEL. Filter them in a background pipe thread.
     """
     global _log_filter_installed
     if _log_filter_installed:
@@ -63,7 +55,7 @@ def _install_xla_log_filter():
     sys.stderr = os.fdopen(py_stderr_fd, "w", encoding="utf-8",
                            errors="replace", buffering=1)
 
-    out_fd = os.dup(2) 
+    out_fd = os.dup(2)
 
     r_fd, w_fd = os.pipe()
     os.dup2(w_fd, 2)
@@ -111,8 +103,11 @@ os.environ.setdefault("GRPC_VERBOSITY", "ERROR")
 _install_xla_log_filter()
 
 
-
 def main():
+    if len(sys.argv) >= 2 and sys.argv[1] in ("-v", "--version"):
+        print(f"cactus-needle {__version__}")
+        sys.exit(0)
+
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help", "help"):
         print(HELP)
         sys.exit(0)
